@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "373532177664",
+    "firebase_url": "https://hyuckapp.firebaseio.com",
+    "project_id": "hyuckapp",
+    "storage_bucket": "hyuckapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373532177664:android:f1bf96e26d68ac42",
+        "android_client_info": {
+          "package_name": "com.lhg1304.hyuckapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373532177664-ksovsq73u333trdaeptmkbelvf7ob5t6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lhg1304.hyuckapp",
+            "certificate_hash": "8750ac8dadc63cfc57582dceee9b96e5e0b6fd32"
+          }
+        },
+        {
+          "client_id": "373532177664-lb8kjg49r0fpi9cen9ml6f10qu0tkldv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lhg1304.hyuckapp",
+            "certificate_hash": "d2e5430103adddd827850f51975ff78a72d69949"
+          }
+        },
+        {
+          "client_id": "373532177664-7vl0gfqmmusma5i4g0bfm1a4a1bpu2a1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOA6dzw-gX6Uqq8GSeqSqrJTiyATtMQlw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373532177664-7vl0gfqmmusma5i4g0bfm1a4a1bpu2a1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

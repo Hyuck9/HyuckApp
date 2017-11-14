@@ -1,0 +1,20 @@
+<resources>
+    <!-- Name -->
+    <string name="app_name">HyuckApp</string>
+    <string name="title_name">Hyuck\'s App</string>
+    <string name="page01_app01">내위치 확인</string>
+    <string name="page01_app02">구글맵</string>
+    <string name="page01_app03">T-Map</string>
+    <string name="page01_app04">BaaS Test</string>
+    <string name="page01_app05">KaKao Login</string>
+    <string name="page02_app01">Firebase</string>
+    <string name="back_btn_message">\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.</string>
+    <string name="title_activity_firebase">FirebaseActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_delete">삭제</string>
+    <string name="action_logout">로그아웃</string>
+
+</resources>

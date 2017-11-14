@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_16" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick02" android:text="@string/page02_app01" />
+
+        <Button android:id="@+id/main_17" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_17" />
+
+        <Button android:id="@+id/main_18" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_18" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/main_19" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_19" />
+
+        <Button android:id="@+id/main_20" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_20" />
+
+        <Button android:id="@+id/main_21" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_21" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/main_22" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_22" />
+
+        <Button android:id="@+id/main_23" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_23" />
+
+        <Button android:id="@+id/main_24" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_24" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/main_25" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_25" />
+
+        <Button android:id="@+id/main_26" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_26" />
+
+        <Button android:id="@+id/main_27" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_27" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/main_28" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_28" />
+
+        <Button android:id="@+id/main_29" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_29" />
+
+        <Button android:id="@+id/main_30" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_30" />
+
+    </LinearLayout>
+
+</LinearLayout>

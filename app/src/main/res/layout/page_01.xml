@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_01" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="@string/page01_app01" />
+
+        <Button android:id="@+id/btn_main_02" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="@string/page01_app02" />
+
+        <Button android:id="@+id/btn_main_03" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="@string/page01_app03" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_04" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="@string/page01_app04" />
+
+        <Button android:id="@+id/btn_main_05" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_05" />
+
+        <Button android:id="@+id/btn_main_06" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_06" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_07" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_07" />
+
+        <Button android:id="@+id/btn_main_08" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_08" />
+
+        <Button android:id="@+id/btn_main_09" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_09" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_10" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_10" />
+
+        <Button android:id="@+id/btn_main_11" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_11" />
+
+        <Button android:id="@+id/btn_main_12" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_12" />
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" >
+
+        <Button android:id="@+id/btn_main_13" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_13" />
+
+        <Button android:id="@+id/btn_main_14" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_14" />
+
+        <Button android:id="@+id/btn_main_15" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_weight="1" android:onClick="mOnClick01" android:text="main_15" />
+
+    </LinearLayout>
+
+</LinearLayout>
