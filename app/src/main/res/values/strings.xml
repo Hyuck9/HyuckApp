@@ -17,5 +17,10 @@
 
     <string name="action_delete">삭제</string>
     <string name="action_logout">로그아웃</string>
+    <string name="search_email">친구 이메일 검색</string>
+    <string name="find">찾기</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -27,6 +27,7 @@ android {
 
 dependencies {
     implementation 'com.android.support:design:25.4.0'
+    implementation 'com.android.support:support-v4:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
 //    compile files('libs/Tdev_baas_android_sdk_1.3.7.jar')
 //    compile files('libs/com.skp.Tmap_1.0.48.jar')
@@ -61,5 +62,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
 }
+
+
+
 
 apply plugin: 'com.google.gms.google-services'

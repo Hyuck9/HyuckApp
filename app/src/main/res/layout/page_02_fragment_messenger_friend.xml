@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.lhg1304.hyuckapp.page02.firemessenger.views.MessengerFriendFragment">
+
+    <LinearLayout
+        android:id="@+id/messenger_search_area"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <EditText
+            android:id="@+id/messenger_et_content"
+            android:padding="5dp"
+            android:layout_weight="7"
+            android:background="#fff"
+            android:inputType="textMultiLine"
+            android:maxLines="1"
+            android:hint="@string/search_email"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/messenger_btn_find"
+            android:padding="5dp"
+            android:layout_weight="1"
+            android:background="#fff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/find" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messenger_friend_recycleview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+</LinearLayout>

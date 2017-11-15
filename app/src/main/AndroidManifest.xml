@@ -65,7 +65,8 @@
             android:label="@string/title_activity_firebase"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".page02.firebase.FirebaseAuthActivity" />
-        <activity android:name=".page02.firemessenger.views.MessengerLoginActivity"></activity>
+        <activity android:name=".page02.firemessenger.views.MessengerLoginActivity" />
+        <activity android:name=".page02.firemessenger.views.MessengerMainActivity"></activity>
     </application>
 
 </manifest>
