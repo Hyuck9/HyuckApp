@@ -5,12 +5,17 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.lhg1304.hyuckapp"
-        minSdkVersion 15
-        targetSdkVersion 22
+        minSdkVersion 19
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
+        }
     }
     buildTypes {
         release {
@@ -23,27 +28,38 @@ android {
 dependencies {
     implementation 'com.android.support:design:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
+//    compile files('libs/Tdev_baas_android_sdk_1.3.7.jar')
+//    compile files('libs/com.skp.Tmap_1.0.48.jar')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
     compile 'com.google.android.gms:play-services-maps:11.6.0'
     compile 'com.google.android.gms:play-services-location:11.6.0'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:multidex:1.0.1'
-    compile files('libs/Tdev_baas_android_sdk_1.3.7.jar')
-    compile files('libs/com.skp.Tmap_1.0.48.jar')
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-database:11.6.0'
+    compile 'com.google.firebase:firebase-storage:11.6.0'
+    compile 'com.google.firebase:firebase-crash:11.6.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    provided "org.projectlombok:lombok:1.16.18"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
+
     // 카카오 로그인 sdk를 사용하기 위해 필요.
     compile group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
-    // 파이어베이스
-    compile 'com.google.firebase:firebase-core:11.6.0'
-    compile 'com.google.firebase:firebase-auth:11.6.0'
-    compile 'com.google.android.gms:play-services-auth:11.6.0'
-    compile 'com.google.firebase:firebase-database:11.6.0'
+    testCompile 'junit:junit:4.12'
 
 }
-
-
 
 apply plugin: 'com.google.gms.google-services'

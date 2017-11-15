@@ -7,7 +7,8 @@
     <string name="page01_app03">T-Map</string>
     <string name="page01_app04">BaaS Test</string>
     <string name="page01_app05">KaKao Login</string>
-    <string name="page02_app01">Firebase</string>
+    <string name="page02_app01">Firebase\nMemo</string>
+    <string name="page02_app02">Firebase\nMessenger</string>
     <string name="back_btn_message">\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.</string>
     <string name="title_activity_firebase">FirebaseActivity</string>
 

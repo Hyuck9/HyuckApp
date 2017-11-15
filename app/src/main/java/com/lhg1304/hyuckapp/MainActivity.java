@@ -16,6 +16,7 @@ import com.lhg1304.hyuckapp.page01.google_map.GoogleMapActivity;
 import com.lhg1304.hyuckapp.page01.my_location.MyLocationActivity;
 import com.lhg1304.hyuckapp.page01.tmap.TMapActivity;
 import com.lhg1304.hyuckapp.page02.firebase.FirebaseAuthActivity;
+import com.lhg1304.hyuckapp.page02.firemessenger.views.MessengerLoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.btn_main_16:
                 openActivity(FirebaseAuthActivity.class);
+                break;
+            case R.id.btn_main_17:
+                openActivity(MessengerLoginActivity.class);
                 break;
         }
     }
