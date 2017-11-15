@@ -1,6 +1,7 @@
 package com.lhg1304.hyuckapp.page02.firemessenger.views;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.adapters.FriendListAdapter;
+import com.lhg1304.hyuckapp.page02.firemessenger.customviews.RecyclerViewItemClickListener;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
 import java.util.Iterator;
@@ -42,7 +44,7 @@ public class MessengerFriendFragment extends Fragment {
     EditText etEmail;
 
     @BindView(R.id.messenger_friend_recycleview)
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     private FirebaseUser mFirebaseUser;
 
@@ -74,8 +76,37 @@ public class MessengerFriendFragment extends Fragment {
         mFriendListAdapter = new FriendListAdapter();
         mRecyclerView.setAdapter(mFriendListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         // 아이템별 (친구) 클릭이벤트를 주어서 선택한 친구와 대화를 할 수 있도록 한다.
+        mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), new RecyclerViewItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                final User friend = mFriendListAdapter.getItem(position);
+                if ( mFriendListAdapter.getSelectionMode() == FriendListAdapter.UNSELECTION_MODE ) {
+                    // 1:1 채팅 체크 모드
+                    Snackbar.make(view, friend.getName()+"님과 대화를 하시겠습니까?",Snackbar.LENGTH_LONG).setAction("예", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
+                            chatIntent.putExtra("uids", mFriendListAdapter.getSelectedUids());
+                            startActivity(chatIntent);
+                        }
+                    }).show();
+                } else {
+                    // 1:N 채팅 체크 모드
+                    friend.setSelection(friend.isSelection() ? false : true);
+                    int selectedUserCount = mFriendListAdapter.getSelectionUserCount();
+                    Snackbar.make(view, selectedUserCount+"명과 대화를 하시겠습니까?",Snackbar.LENGTH_LONG).setAction("예", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
+                            chatIntent.putExtra("uid", friend.getUid());
+                            startActivity(chatIntent);
+                        }
+                    }).show();
+                }
+
+            }
+        }));
 
         return friendView;
     }
@@ -84,8 +115,14 @@ public class MessengerFriendFragment extends Fragment {
         mSearchArea.setVisibility( mSearchArea.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE );
     }
 
+    public void toggleSelectionMode() {
+        mFriendListAdapter.setSelectionMode(
+                mFriendListAdapter.getSelectionMode() == FriendListAdapter.SELECTION_MODE ? FriendListAdapter.UNSELECTION_MODE : FriendListAdapter.SELECTION_MODE
+        );
+    }
+
     @OnClick(R.id.messenger_btn_find)
-    private void addFriend() {
+    void addFriend() {
 
         // 입력된 이메일 가져옴
         final String inputEmail = etEmail.getText().toString();

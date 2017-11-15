@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +27,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public static final int UNSELECTION_MODE = 1;
     public static final int SELECTION_MODE = 2;
 
+    private int selectionMode = UNSELECTION_MODE;
+
     private ArrayList<User> friendList;
 
     public FriendListAdapter() {
@@ -35,6 +38,36 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public void addItem(User friend) {
         friendList.add(friend);
         notifyDataSetChanged();
+    }
+
+    public void setSelectionMode(int selectionMode) {
+        this.selectionMode = selectionMode;
+        notifyDataSetChanged();
+    }
+
+    public int getSelectionMode() {
+        return this.selectionMode;
+    }
+
+    public int getSelectionUserCount() {
+        int selectedCount = 0;
+        for ( User user : friendList ) {
+            if ( user.isSelection() ) {
+                selectedCount++;
+            }
+        }
+        return selectedCount;
+    }
+
+    public String [] getSelectedUids() {
+        String [] selectedUids = new String[getSelectionUserCount()];
+        int i = 0;
+        for ( User user : friendList ) {
+            if ( user.isSelection() ) {
+                selectedUids[i++] = user.getUid();
+            }
+        }
+        return selectedUids;
     }
 
     public User getItem(int position) {
@@ -54,6 +87,12 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
         User friend = getItem(position);
         holder.mEmailView.setText(friend.getEmail());
         holder.mNameView.setText(friend.getName());
+        if ( getSelectionMode() == UNSELECTION_MODE ) {
+            holder.friendSelectedView.setVisibility(View.GONE);
+        } else {
+            holder.friendSelectedView.setVisibility(View.VISIBLE);
+        }
+
         if ( friend.getProfileUrl() != null ) {
             Glide.with(holder.itemView)
                     .load(friend.getProfileUrl())
@@ -68,6 +107,9 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
 
 
     public static class FriendHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.messenger_friend_item_checkbox)
+        CheckBox friendSelectedView;
 
         @BindView(R.id.messenger_friend_item_thumb)
         RoundedImageView mProfileView;

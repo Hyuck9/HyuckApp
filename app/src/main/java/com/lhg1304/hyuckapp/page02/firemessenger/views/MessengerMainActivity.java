@@ -44,6 +44,12 @@ public class MessengerMainActivity extends AppCompatActivity {
                 Fragment currentFragment = mPagerAdapter.getItem(mViewPager.getCurrentItem());
                 if (currentFragment instanceof MessengerFriendFragment) {
                     ((MessengerFriendFragment) currentFragment).toggleSearchBar();
+                } else {
+                    // 친구 탭으로 이동
+                    mViewPager.setCurrentItem(2, true);
+                    // 체크박스가 보일 수 있도록 처리
+                    MessengerFriendFragment friendFragment = (MessengerFriendFragment) mPagerAdapter.getItem(1);
+                    friendFragment.toggleSelectionMode();
                 }
             }
         });
