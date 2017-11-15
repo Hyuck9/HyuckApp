@@ -1,0 +1,159 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- 상대방 -->
+    <LinearLayout
+        android:id="@+id/messenger_message_item_your_chat_area"
+        android:visibility="gone"
+        android:padding="2dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.lhg1304.hyuckapp.page02.firemessenger.customviews.RoundedImageView
+            android:id="@+id/messenger_message_item_rcv_profile"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+        <TextView
+            android:maxWidth="230dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rounded_your_chat_message"
+            android:id="@+id/messenger_message_item_rcv_txt"
+            android:padding="7dp"
+            android:textColor="#000"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:textSize="15dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:maxWidth="230dp"
+            android:maxHeight="230dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rounded_your_chat_message"
+            android:id="@+id/messenger_message_item_rcv_image"
+            android:padding="3dp"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:padding="2dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/messenger_message_item_rcv_unread_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:textColor="#FFFF00"/>
+            <TextView
+                android:id="@+id/messenger_message_item_rcv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:textAlignment="textStart"
+                android:textColor="#68747C"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <!-- 방 나갈을-->
+    <LinearLayout
+        android:id="@+id/messenger_message_item_exit_area"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/messenger_message_item_exit_txt"
+            android:padding="7dp"
+            android:textColor="#000"
+            android:textAlignment="center"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:textSize="15dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+    <!-- 내가 쓴 글-->
+
+    <LinearLayout
+        android:id="@+id/messenger_message_item_my_chat_area"
+        android:padding="2dp"
+        android:layout_gravity="right"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:padding="2dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/messenger_message_item_send_unread_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textSize="10dp"
+                android:textColor="#FFFF00"/>
+
+            <TextView
+                android:id="@+id/messenger_message_item_send_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:textSize="10dp"
+                android:text="06/13 오후\n 11:00"
+                android:textColor="#68747C"/>
+        </LinearLayout>
+
+        <TextView
+            android:maxWidth="250dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rounded_my_chat_message"
+            android:id="@+id/messenger_message_item_send_txt"
+            android:padding="7dp"
+            android:textColor="#fff"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:textSize="15dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:maxWidth="250dp"
+            android:maxHeight="250dp"
+            android:visibility="gone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rounded_my_chat_message"
+            android:id="@+id/messenger_message_item_send_image"
+            android:padding="3dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -24,9 +24,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
@@ -122,18 +124,37 @@ public class MessengerLoginActivity extends AppCompatActivity implements GoogleA
                                 if ( firebaseUser.getPhotoUrl() != null ) {
                                     user.setProfileUrl(firebaseUser.getPhotoUrl().toString());
                                 }
-                                mUserRef.child(user.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
+                                mUserRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        if ( databaseError == null ) {
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if ( !dataSnapshot.exists() ) {
+                                            // 데이터가 존재하지 않을때 친구 생성
+                                            mUserRef.child(user.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
+                                                @Override
+                                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                    if ( databaseError == null ) {
+                                                        startActivity(new Intent(MessengerLoginActivity.this, MessengerMainActivity.class));
+                                                        finish();
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            // 존재한다면 메신저 메인 액티비티 호출
                                             startActivity(new Intent(MessengerLoginActivity.this, MessengerMainActivity.class));
                                             finish();
-                                            Bundle eventBundle = new Bundle();
-                                            eventBundle.putString("email", user.getEmail());
-                                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, eventBundle);
                                         }
+
+                                        Bundle eventBundle = new Bundle();
+                                        eventBundle.putString("email", user.getEmail());
+                                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, eventBundle);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
                                     }
                                 });
+
 
 
                             } else {

@@ -4,6 +4,8 @@ package com.lhg1304.hyuckapp.page02.firemessenger.views;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,14 @@ import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
+import com.lhg1304.hyuckapp.page02.firemessenger.adapters.FriendListAdapter;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
 import java.util.Iterator;
@@ -37,14 +41,19 @@ public class MessengerFriendFragment extends Fragment {
     @BindView(R.id.messenger_et_content)
     EditText etEmail;
 
+    @BindView(R.id.messenger_friend_recycleview)
+    private RecyclerView mRecyclerView;
+
     private FirebaseUser mFirebaseUser;
 
     private FirebaseAuth mFirebaseAuth;
 
     private FirebaseDatabase mFirebaseDatabase;
-
     private DatabaseReference mFriendsDBRef;
+
     private DatabaseReference mUserDBRef;
+
+    private FriendListAdapter mFriendListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +67,15 @@ public class MessengerFriendFragment extends Fragment {
 
         mFriendsDBRef = mFirebaseDatabase.getReference("users").child(mFirebaseUser.getUid()).child("friends");
         mUserDBRef = mFirebaseDatabase.getReference("users");
+
+        // RDB에서 나의 친구목록을 리스트를 통하여 데이터를 가져온다.
+        addFriendListener();
+        // 가져온 데이터를 통해 recyclerview의 아답터에 아이템을 추가시켜준다. (UI갱신)
+        mFriendListAdapter = new FriendListAdapter();
+        mRecyclerView.setAdapter(mFriendListAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // 아이템별 (친구) 클릭이벤트를 주어서 선택한 친구와 대화를 할 수 있도록 한다.
 
         return friendView;
     }
@@ -160,6 +178,41 @@ public class MessengerFriendFragment extends Fragment {
             }
         });
 
+    }
+
+    private void addFriendListener() {
+
+        mFriendsDBRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                User friend = dataSnapshot.getValue(User.class);
+                drawUI(friend);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void drawUI(User friend) {
+        mFriendListAdapter.addItem(friend);
     }
 
 }
