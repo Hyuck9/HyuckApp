@@ -17,6 +17,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.adapters.MessageListAdapter;
@@ -105,7 +107,9 @@ public class MessengerChatActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        removeMessageListener();
+        if ( mChatId != null ) {
+            removeMessageListener();
+        }
     }
 
     @Override
@@ -120,51 +124,107 @@ public class MessengerChatActivity extends AppCompatActivity {
         mChatDBRef.child("totalUnreadCount").setValue(0);
     }
 
-    private void addMessageListener() {
-        mChatMessageDBRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // 신규 메시지
-                Message item = dataSnapshot.getValue(Message.class);
+    ChildEventListener mMessageEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            // 신규 메시지
+            Message item = dataSnapshot.getValue(Message.class);
 
-                if ( item.getMessageType() == Message.MessageType.TEXT ) {
-                    TextMessage textMessage = dataSnapshot.getValue(TextMessage.class);
-                    mMessageListAdapter.addItem(textMessage);
-                } else if ( item.getMessageType() == Message.MessageType.PHOTO ) {
-                    PhotoMessage photoMessage = dataSnapshot.getValue(PhotoMessage.class);
-                    mMessageListAdapter.addItem(photoMessage);
+            // 읽음 처리
+            // chat_messages > {chat_id} > {message_id} > readUserList
+            // 내가 존재 하는지 확인
+            List<String> readUserUidList = item.getReadUserList();
+            if ( readUserUidList != null ) {
+                // 존재 하지 않는다면
+                if ( !readUserUidList.contains(mFirebaseUser.getUid()) ) {
+                    // 공유된 자원을 업데이트 할 때에는 트랜젝션 처리
+                    dataSnapshot.getRef().runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            Message mutableMessage = mutableData.getValue(Message.class);
+                            // readUserList에 내 uid 추가
+                            // chat_messages > {chat_id} > {message_id} > unReadCount -= 1
+                            List<String> mutableReadUserList = mutableMessage.getReadUserList();
+                            mutableReadUserList.add(mFirebaseUser.getUid());
+                            int mutableUnreadCount = mutableMessage.getUnreadCount() - 1;
+
+                            if ( mutableMessage.getMessageType() == Message.MessageType.PHOTO ) {
+                                PhotoMessage mutablePhotoMessage = mutableData.getValue(PhotoMessage.class);
+                                mutablePhotoMessage.setReadUserList(mutableReadUserList);
+                                mutablePhotoMessage.setUnreadCount(mutableUnreadCount);
+                                mutableData.setValue(mutablePhotoMessage);
+                            } else if ( mutableMessage.getMessageType() == Message.MessageType.TEXT ) {
+                                TextMessage mutableTextMessage = mutableData.getValue(TextMessage.class);
+                                mutableTextMessage.setReadUserList(mutableReadUserList);
+                                mutableTextMessage.setUnreadCount(mutableUnreadCount);
+                                mutableData.setValue(mutableTextMessage);
+                            }
+
+                            // Transaction.success()시 onComplete 호출됨
+                            return Transaction.success(mutableData);
+
+                        }
+
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            initTotalUnreadCount();
+                        }
+                    });
+
                 }
 
-                // 읽음 처리
-
-                // UI 처리
-
             }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                // 변경된 메시지
+            // UI 처리
+            if ( item.getMessageType() == Message.MessageType.TEXT ) {
+                TextMessage textMessage = dataSnapshot.getValue(TextMessage.class);
+                mMessageListAdapter.addItem(textMessage);
+            } else if ( item.getMessageType() == Message.MessageType.PHOTO ) {
+                PhotoMessage photoMessage = dataSnapshot.getValue(PhotoMessage.class);
+                mMessageListAdapter.addItem(photoMessage);
             }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+        }
 
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            // 변경된 메시지 (unreadCount)
+            // 아답터쪽에 변경된 메세지 데이터를 전달
+            // 메세지 아이디 번호로 해당 메세지의 위치를 알아내서
+            // 알아낸 위치값을 이용하여 메세지 리스트의 값을 변경
+            Message item = dataSnapshot.getValue(Message.class);
+
+            if ( item.getMessageType() == Message.MessageType.TEXT ) {
+                TextMessage textMessage = dataSnapshot.getValue(TextMessage.class);
+                mMessageListAdapter.addItem(textMessage);
+            } else if ( item.getMessageType() == Message.MessageType.PHOTO ) {
+                PhotoMessage photoMessage = dataSnapshot.getValue(PhotoMessage.class);
+                mMessageListAdapter.addItem(photoMessage);
             }
+        }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    private void addMessageListener() {
+        mChatMessageDBRef.addChildEventListener(mMessageEventListener);
     }
 
     private void removeMessageListener() {
-
+        mChatMessageDBRef.removeEventListener(mMessageEventListener);
     }
 
     @OnClick(R.id.messenger_sender_btn)
