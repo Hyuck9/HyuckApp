@@ -355,6 +355,7 @@ public class MessengerChatActivity extends AppCompatActivity {
                                     dataSnapshot.getRef().child("chats").child(mChatId).setValue(chat);
                                     if ( !isSentMessage ) {
                                         sendMessage();
+                                        addMessageListener();
                                         isSentMessage = true;
                                     }
                                 }
