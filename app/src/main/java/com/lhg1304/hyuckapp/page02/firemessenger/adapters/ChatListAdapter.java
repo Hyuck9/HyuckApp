@@ -24,6 +24,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 
     private ArrayList<Chat> mChatList;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd\naa hh:mm");
+
     public ChatListAdapter() {
         mChatList = new ArrayList<>();
     }
@@ -61,7 +62,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mChatList.size();
     }
 
 

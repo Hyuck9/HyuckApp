@@ -1,21 +1,28 @@
 package com.lhg1304.hyuckapp.page02.firemessenger.views;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
+import com.lhg1304.hyuckapp.page02.firemessenger.adapters.MessageListAdapter;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Chat;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Message;
+import com.lhg1304.hyuckapp.page02.firemessenger.models.PhotoMessage;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.TextMessage;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
@@ -39,6 +46,14 @@ public class MessengerChatActivity extends AppCompatActivity {
     @BindView(R.id.messenger_edt_content)
     EditText mMessageText;
 
+    @BindView(R.id.messenger_toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.messenger_chat_rec_view)
+    RecyclerView mChatRecyclerView;
+
+    private MessageListAdapter mMessageListAdapter;
+
     private FirebaseDatabase mFirebaseDatabase;
 
     private DatabaseReference mChatDBRef;
@@ -59,6 +74,96 @@ public class MessengerChatActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mUserDBRef = mFirebaseDatabase.getReference("users");
+        mToolbar.setTitleTextColor(Color.WHITE);
+
+        if ( mChatId != null ) {
+            mChatDBRef = mFirebaseDatabase.getReference("users").child(mFirebaseUser.getUid()).child("chats").child(mChatId);
+            mChatMemberDBRef = mFirebaseDatabase.getReference("chat_members").child(mChatId);
+            mChatMessageDBRef = mFirebaseDatabase.getReference("chat_messages").child(mChatId);
+            mChatDBRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String title = dataSnapshot.getValue(String.class);
+                    mToolbar.setTitle(title);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            initTotalUnreadCount();
+        } else {
+            mChatDBRef = mFirebaseDatabase.getReference("users").child(mFirebaseUser.getUid()).child("chats");
+        }
+
+        mMessageListAdapter = new MessageListAdapter();
+        mChatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mChatRecyclerView.setAdapter(mMessageListAdapter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeMessageListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ( mChatId != null ) {
+            addMessageListener();
+        }
+    }
+
+    private void initTotalUnreadCount() {
+        mChatDBRef.child("totalUnreadCount").setValue(0);
+    }
+
+    private void addMessageListener() {
+        mChatMessageDBRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // 신규 메시지
+                Message item = dataSnapshot.getValue(Message.class);
+
+                if ( item.getMessageType() == Message.MessageType.TEXT ) {
+                    TextMessage textMessage = dataSnapshot.getValue(TextMessage.class);
+                    mMessageListAdapter.addItem(textMessage);
+                } else if ( item.getMessageType() == Message.MessageType.PHOTO ) {
+                    PhotoMessage photoMessage = dataSnapshot.getValue(PhotoMessage.class);
+                    mMessageListAdapter.addItem(photoMessage);
+                }
+
+                // 읽음 처리
+
+                // UI 처리
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // 변경된 메시지
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void removeMessageListener() {
 
     }
 
@@ -89,6 +194,7 @@ public class MessengerChatActivity extends AppCompatActivity {
         textMessage.setChatId(mChatId);
         textMessage.setMessageId(messageId);
         textMessage.setMessageType(Message.MessageType.TEXT);
+        textMessage.setMessageUser(new User(mFirebaseUser.getUid(), mFirebaseUser.getEmail(), mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString()));
         textMessage.setReadUserList(Arrays.asList(new String[]{mFirebaseUser.getUid()}));
         String [] uids = getIntent().getStringArrayExtra("uids");
         if ( uids != null ) {

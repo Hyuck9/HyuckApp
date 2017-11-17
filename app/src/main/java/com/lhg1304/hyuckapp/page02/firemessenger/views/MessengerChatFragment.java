@@ -1,5 +1,6 @@
 package com.lhg1304.hyuckapp.page02.firemessenger.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.adapters.ChatListAdapter;
+import com.lhg1304.hyuckapp.page02.firemessenger.customviews.RecyclerViewItemClickListener;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Chat;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
@@ -61,6 +63,16 @@ public class MessengerChatFragment extends Fragment {
         mChatRecyclerView.setAdapter(mChatListAdapter);
         mChatRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        mChatRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), new RecyclerViewItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Chat chat = mChatListAdapter.getItem(position);
+
+                Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
+                chatIntent.putExtra("chat_id", chat.getChatId());
+                startActivity(chatIntent);
+            }
+        }));
         addChatListener();
 
         return chatView;
@@ -83,20 +95,23 @@ public class MessengerChatFragment extends Fragment {
                         int loopCount = 1;
                         while( memberIterator.hasNext() ) {
                             User member = memberIterator.next().getValue(User.class);
-                            memberStringBuffer.append(member.getName());
 
-                            if ( loopCount < memberCount ) {
-                                memberStringBuffer.append(", ");
+                            if ( !mFirebaseUser.getUid().equals(member.getUid()) ) {
+                                memberStringBuffer.append(member.getName());
+
+                                if ( memberCount - loopCount > 1 ) {
+                                    memberStringBuffer.append(", ");
+                                }
                             }
 
                             if ( loopCount == memberCount ) {
                                 String title = memberStringBuffer.toString();
-                                if ( chatRoom.getTitle() != null ) {
-                                    if ( !chatRoom.getTitle().equals(title) ) {
-                                        // users > {uid} > chats > {chat_id} > title
-                                        chatDataSnapshot.getRef().child("title").setValue(title);
-                                    }
+                                if ( chatRoom.getTitle() == null ) {
+                                    chatDataSnapshot.getRef().child("title").setValue(title);
+                                } else if ( !chatRoom.getTitle().equals(title) ) {
+                                    chatDataSnapshot.getRef().child("title").setValue(title);
                                 }
+                                chatRoom.setTitle(title);
                                 // UI 갱신 시켜주는 메서드로 방의 정보를 전달
                                 drawUI( chatRoom );
                             }
