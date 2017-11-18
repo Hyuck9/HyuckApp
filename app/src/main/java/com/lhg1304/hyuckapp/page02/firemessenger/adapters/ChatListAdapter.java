@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.customviews.RoundedImageView;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Chat;
+import com.lhg1304.hyuckapp.page02.firemessenger.models.Message;
 import com.lhg1304.hyuckapp.page02.firemessenger.views.MessengerChatFragment;
 
 import java.text.SimpleDateFormat;
@@ -85,10 +86,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 
         // chatThumbnailView
         if ( item.getLastMessage() != null ) {
-            holder.lastMessageView.setText(item.getLastMessage().getMessageText());
-            holder.lastMessageDateView.setText(sdf.format(item.getLastMessage().getMessageDate()));
 
+            if ( item.getLastMessage().getMessageType() == Message.MessageType.TEXT ) {
+                holder.lastMessageView.setText(item.getLastMessage().getMessageText());
+
+            } else if ( item.getLastMessage().getMessageType() == Message.MessageType.PHOTO ) {
+                holder.lastMessageView.setText("(사진)");
+
+            }
+
+
+            holder.lastMessageDateView.setText(sdf.format(item.getLastMessage().getMessageDate()));
         }
+
 
         holder.titleView.setText(item.getTitle());
         holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {

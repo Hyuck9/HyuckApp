@@ -1,5 +1,6 @@
 package com.lhg1304.hyuckapp.page02.firemessenger.views;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import com.lhg1304.hyuckapp.page02.firemessenger.adapters.ChatListAdapter;
 import com.lhg1304.hyuckapp.page02.firemessenger.customviews.RecyclerViewItemClickListener;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Chat;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.Message;
+import com.lhg1304.hyuckapp.page02.firemessenger.models.Notification;
 import com.lhg1304.hyuckapp.page02.firemessenger.models.User;
 
 import java.util.Iterator;
@@ -48,9 +50,13 @@ public class MessengerChatFragment extends Fragment {
 
     private ChatListAdapter mChatListAdapter;
 
-    public static String joinChatId = "";
+    public static String JOINED_ROOM = "";
 
     public static final int JOIN_ROOM_REQUEST_CODE = 100;
+
+    private Notification mNotification;
+
+    private Context mContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,92 +82,53 @@ public class MessengerChatFragment extends Fragment {
                 Chat chat = mChatListAdapter.getItem(position);
                 Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
                 chatIntent.putExtra("chat_id", chat.getChatId());
-                joinChatId = chat.getChatId();
                 startActivityForResult(chatIntent, JOIN_ROOM_REQUEST_CODE);
             }
         }));
-        addChatListener();
+        mContext = getActivity();
+        mNotification = new Notification(mContext);
 
+        addChatListener();
         return chatView;
     }
 
     private void addChatListener() {
         mChatDBRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(final DataSnapshot chatDataSnapshot, String s) {
-
+            public void onChildAdded(DataSnapshot chatDataSnapshot, String s) {
+                // UI 갱신 시켜주는 메서드로 방의 정보를 전달.
                 // 방에 대한 정보를 얻어오고
-                final Chat chatRoom = chatDataSnapshot.getValue(Chat.class);
-                mChatMemberDBRef.child(chatRoom.getChatId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long memberCount = dataSnapshot.getChildrenCount();
-                        Iterator<DataSnapshot> memberIterator = dataSnapshot.getChildren().iterator();
-                        StringBuffer memberStringBuffer = new StringBuffer();
-
-                        int loopCount = 1;
-                        while( memberIterator.hasNext() ) {
-                            User member = memberIterator.next().getValue(User.class);
-
-                            if ( !mFirebaseUser.getUid().equals(member.getUid()) ) {
-                                memberStringBuffer.append(member.getName());
-
-                                if ( memberCount - loopCount > 1 ) {
-                                    memberStringBuffer.append(", ");
-                                }
-                            }
-
-                            if ( loopCount == memberCount ) {
-                                String title = memberStringBuffer.toString();
-                                if ( chatRoom.getTitle() == null ) {
-                                    chatDataSnapshot.getRef().child("title").setValue(title);
-                                } else if ( !chatRoom.getTitle().equals(title) ) {
-                                    chatDataSnapshot.getRef().child("title").setValue(title);
-                                }
-                                chatRoom.setTitle(title);
-                                // UI 갱신 시켜주는 메서드로 방의 정보를 전달
-                                drawUI( chatRoom );
-                            }
-                            loopCount++;
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
                 // 기존의 방제목과 방 멤버의 이름들을 가져와서 타이틀화 시켰을 때 같지 않은 경우 방제목을 업데이트
-
-
+                drawUI(chatDataSnapshot, DrawType.ADD);
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(DataSnapshot chatDataSnapshot, String s) {
                 // 내가 보낸 메시지가 아닌 경우와 마지막 메시지가 수정이 되었다면 -> 노티출력
 
                 // 변경된 방의 정보를 수신
                 // 변경된 포지션 확인 (채팅방 아이디로 기존의 포지션 확인)
                 // 그 포지션의 아이템 중 unreadCount가 변경이 되었다면 unreadCount 변경
                 // 현재 Activity가 MessengerChatActivity 이고 chat_id가  같다면 노티는 해주지 않음
-                Chat updatedChat = dataSnapshot.getValue(Chat.class);
+                // totalUnreadCount변경, title변경, lastMessage변경시 onChildChanged 호출됨
+                drawUI(chatDataSnapshot, DrawType.UPDATE);
+                Chat updatedChat = chatDataSnapshot.getValue(Chat.class);
 
-                Chat oldChat = mChatListAdapter.getItem(updatedChat.getChatId());
-
-                mChatListAdapter.updateItem(updatedChat);
-
-                if ( updatedChat.getLastMessage() == null || oldChat.getLastMessage() == null) {
-                    return;
-                }
-
-                // 내가 보낸 메시지는 내가 노티 받지 않아야 하기 때문에
-                if ( !updatedChat.getLastMessage().getMessageUser().getUid().equals(mFirebaseUser.getUid()) ) {
-                    if ( updatedChat.getLastMessage().getMessageDate().getTime() > oldChat.getLastMessage().getMessageDate().getTime() ) {
+                if ( updatedChat.getLastMessage() != null ) {
+//                    if ( updatedChat.getLastMessage().getMessageType() ==Message.MessageType.EXIT ) {
+//                        return;
+//                    }
+                    // 내가 보낸 메시지는 내가 노티 받지 않아야 하기 때문에
+                    if ( !updatedChat.getLastMessage().getMessageUser().getUid().equals(mFirebaseUser.getUid()) ) {
                         // lastMessage의 시각과 변경된 메세지의 lastMessage 시간이 다르다면 -> 노티출력
-                        if ( !updatedChat.getChatId().equals(joinChatId) ) {
+                        if ( !updatedChat.getChatId().equals(JOINED_ROOM) ) {
                             // 노티 출력
-                            Snackbar.make(getView(), updatedChat.getLastMessage().getMessageText(), Snackbar.LENGTH_LONG).show();
+                            Intent chatIntent = new Intent(mContext, MessengerChatActivity.class);
+                            chatIntent.putExtra("chat_id", updatedChat.getChatId());
+                            mNotification.setData(chatIntent)
+                                    .setTitle(updatedChat.getLastMessage().getMessageUser().getName())
+                                    .setText(updatedChat.getLastMessage().getMessageText())
+                                    .notification();
                         }
                     }
                 }
@@ -187,8 +154,63 @@ public class MessengerChatFragment extends Fragment {
         });
     }
 
-    private void drawUI(Chat chat) {
-        mChatListAdapter.addItem(chat);
+    private void drawUI(final DataSnapshot chatDataSnapshot, final DrawType drawType) {
+        // 방에 대한 정보를 얻어오고
+        final Chat chatRoom = chatDataSnapshot.getValue(Chat.class);
+        mChatMemberDBRef.child(chatRoom.getChatId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long memberCount = dataSnapshot.getChildrenCount();
+                Iterator<DataSnapshot> memberIterator = dataSnapshot.getChildren().iterator();
+                StringBuffer memberStringBuffer = new StringBuffer();
+
+                if ( memberCount <= 1 ) {
+                    chatRoom.setTitle("대화상대가 없는 방입니다.");
+                    chatDataSnapshot.getRef().child("title").setValue(chatRoom.getTitle());
+                    chatDataSnapshot.getRef().child("disabled").setValue(true);
+                    if ( drawType == DrawType.ADD ) {
+                        mChatListAdapter.addItem(chatRoom);
+                    } else {
+                        mChatListAdapter.updateItem(chatRoom);
+                    }
+                    return;
+                }
+
+                int loopCount = 1;
+                while( memberIterator.hasNext() ) {
+                    User member = memberIterator.next().getValue(User.class);
+
+                    if ( !mFirebaseUser.getUid().equals(member.getUid()) ) {
+                        memberStringBuffer.append(member.getName());
+                        if ( memberCount - loopCount > 1 ) {
+                            memberStringBuffer.append(", ");
+                        }
+                    }
+
+                    if ( loopCount == memberCount ) {
+                        // users > {uid} > chats > {chat_id} > title
+                        String title = memberStringBuffer.toString();
+                        if ( chatRoom.getTitle() == null ) {
+                            chatDataSnapshot.getRef().child("title").setValue(title);
+                        } else if ( !chatRoom.getTitle().equals(title) ) {
+                            chatDataSnapshot.getRef().child("title").setValue(title);
+                        }
+                        chatRoom.setTitle(title);
+                        if ( drawType == DrawType.ADD ) {
+                            mChatListAdapter.addItem(chatRoom);
+                        } else {
+                            mChatListAdapter.updateItem(chatRoom);
+                        }
+                    }
+                    loopCount++;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void leaveChat(final Chat chat) {
@@ -234,6 +256,34 @@ public class MessengerChatFragment extends Fragment {
 
                             }
                         });
+
+                        /**
+                         * 대화방의 타이틀이 변경됨을 알려주어 채팅방의 리스너가 감지하게 하여 방 이름을 업데이트
+                         * 방의 제목은 방의 업데이트, 추가되었을때의 리스너가 처리하기때문에 방 제목만 변경시켜서 변경이 되었음만 알리면 됨
+                         */
+                        mChatMemberDBRef.child(chat.getChatId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Iterator<DataSnapshot> memberIterator = dataSnapshot.getChildren().iterator();
+
+                                while ( memberIterator.hasNext() ) {
+                                    // 방 참여자의 UID를 가져오기 위해 user 정보 조회
+                                    User chatMember = memberIterator.next().getValue(User.class);
+                                    // 해당 참여자의 방 정보의 업데이트를 위하여 방이름을 임의로 업데이트
+                                    mFirebaseDatabase.getReference("users")
+                                            .child(chatMember.getUid())
+                                            .child("chats")
+                                            .child(chat.getChatId())
+                                            .child("title")
+                                            .setValue("");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 });
 
@@ -245,7 +295,11 @@ public class MessengerChatFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ( requestCode == JOIN_ROOM_REQUEST_CODE ) {
-            joinChatId = "";
+            JOINED_ROOM = "";
         }
+    }
+
+    private enum DrawType {
+        ADD, UPDATE
     }
 }
