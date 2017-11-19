@@ -42,6 +42,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -225,7 +227,14 @@ public class MessengerChatActivity extends AppCompatActivity {
 
                         @Override
                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                            initTotalUnreadCount();
+                            // 0.5초 정도 후에 언리드카운트의 값을 초기화
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    initTotalUnreadCount();
+                                }
+                            }, 500);
+
                         }
                     });
 
@@ -405,19 +414,21 @@ public class MessengerChatActivity extends AppCompatActivity {
                                     .setValue(mMessage);
 
                             if ( !chatMember.getUid().equals(mFirebaseUser.getUid()) ) {
+                                // 공유되는 증가카운트의 경우 트랜잭션을 이용하여 처리
                                 mUserDBRef.child(chatMember.getUid())
                                         .child("chats")
                                         .child(mChatId)
                                         .child("totalUnreadCount")
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        .runTransaction(new Transaction.Handler() {
                                             @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                long totalUnreadCount = dataSnapshot.getValue(long.class);
-                                                dataSnapshot.getRef().setValue(totalUnreadCount+1);
+                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                long totalUnreadCount = dataSnapshot.getValue(long.class) == null ? 0 : dataSnapshot.getValue(long.class);
+                                                mutableData.setValue(totalUnreadCount + 1);
+                                                return Transaction.success(mutableData);
                                             }
 
                                             @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
 
                                             }
                                         });

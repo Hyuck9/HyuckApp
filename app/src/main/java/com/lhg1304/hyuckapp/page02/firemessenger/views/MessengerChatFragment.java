@@ -238,8 +238,10 @@ public class MessengerChatFragment extends Fragment {
                         // EXIT 메시지 발송
                         // chat_messages > {chat_id} > {message_id} > 내용
                         final ExitMessage exitMessage = new ExitMessage();
+                        String messageId = mChatMessageDBRef.push().getKey();
                         exitMessage.setMessageUser(new User(mFirebaseUser.getUid(), mFirebaseUser.getEmail(), mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString()));
                         exitMessage.setMessageDate(new Date());
+                        exitMessage.setMessageId(messageId);
                         exitMessage.setChatId(chat.getChatId());
                         mChatMessageDBRef.child(chat.getChatId()).push().setValue(exitMessage);
 
