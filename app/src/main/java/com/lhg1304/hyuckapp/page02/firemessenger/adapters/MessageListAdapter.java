@@ -140,6 +140,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
                 holder.rcvText.setVisibility(View.GONE);
                 holder.rcvImage.setVisibility(View.VISIBLE);
+            } else if ( item.getMessageType() == Message.MessageType.EXIT ) {
+                holder.exitText.setText(String.format("%s님이 방에서 나가셨습니다.", item.getMessageUser().getName()));
             }
 
             if ( item.getUnreadCount() > 0 ) {
@@ -153,9 +155,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
                         .load(item.getMessageUser().getProfileUrl())
                         .into(holder.rcvProfileView);
             }
-            holder.rcvDate.setText(messageDateFormat.format(item.getMessageDate()));
-            holder.sendArea.setVisibility(View.GONE);
-            holder.yourArea.setVisibility(View.VISIBLE);
+
+            if ( item.getMessageType() == Message.MessageType.EXIT ) {
+                holder.sendArea.setVisibility(View.GONE);
+                holder.yourArea.setVisibility(View.GONE);
+                holder.exitArea.setVisibility(View.VISIBLE);
+
+            } else {
+                holder.rcvDate.setText(messageDateFormat.format(item.getMessageDate()));
+                holder.sendArea.setVisibility(View.GONE);
+                holder.yourArea.setVisibility(View.VISIBLE);
+
+            }
+
         }
 
     }
@@ -175,8 +187,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         @BindView(R.id.messenger_message_item_my_chat_area)
         LinearLayout sendArea;
 
+        @BindView(R.id.messenger_message_item_exit_area)
+        LinearLayout exitArea;
+
         @BindView(R.id.messenger_message_item_rcv_profile)
         RoundedImageView rcvProfileView;
+
+        @BindView(R.id.messenger_message_item_exit_txt)
+        TextView exitText;
 
         @BindView(R.id.messenger_message_item_rcv_txt)
         TextView rcvText;

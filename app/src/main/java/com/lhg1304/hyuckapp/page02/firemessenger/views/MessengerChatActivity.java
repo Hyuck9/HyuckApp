@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -70,6 +71,7 @@ public class MessengerChatActivity extends AppCompatActivity {
     private DatabaseReference mUserDBRef;
     private StorageReference mImageStorageRef;
     private FirebaseUser mFirebaseUser;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     private static final int TAKE_PHOTO_REQUEST_CODE = 201;
@@ -104,6 +106,7 @@ public class MessengerChatActivity extends AppCompatActivity {
         mMessageListAdapter = new MessageListAdapter();
         mChatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mChatRecyclerView.setAdapter(mMessageListAdapter);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     @Override
@@ -237,6 +240,8 @@ public class MessengerChatActivity extends AppCompatActivity {
             } else if ( item.getMessageType() == Message.MessageType.PHOTO ) {
                 PhotoMessage photoMessage = dataSnapshot.getValue(PhotoMessage.class);
                 mMessageListAdapter.addItem(photoMessage);
+            } else if ( item.getMessageType() == Message.MessageType.EXIT ) {
+                mMessageListAdapter.addItem(item);
             }
 
             if ( callCount >= totalMessageCount ) {
@@ -343,7 +348,7 @@ public class MessengerChatActivity extends AppCompatActivity {
     }
 
 
-    Message mMessage = new Message();
+    private Message mMessage = new Message();
     private void sendMessage() {
         // 메세지 키 생성
         mChatMessageDBRef = mFirebaseDatabase.getReference("chat_messages").child(mChatId);
@@ -351,6 +356,10 @@ public class MessengerChatActivity extends AppCompatActivity {
         String messageId = mChatMessageDBRef.push().getKey();
         String messageText = mMessageText.getText().toString();
 
+        final Bundle bundle = new Bundle();
+        bundle.putString("me", mFirebaseUser.getEmail());
+        bundle.putString("roomId", mChatId);
+        bundle.putString("messageType", mMessageType.toString());
 
         if ( mMessageType == Message.MessageType.TEXT ) {
             if ( messageText.isEmpty() ) {
@@ -384,6 +393,8 @@ public class MessengerChatActivity extends AppCompatActivity {
                 mChatMessageDBRef.child(mMessage.getMessageId()).setValue(mMessage, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                        mFirebaseAnalytics.logEvent("sendMessage", bundle);
                         Iterator<DataSnapshot> memberIterator = dataSnapshot.getChildren().iterator();
                         while( memberIterator.hasNext() ) {
                             User chatMember = memberIterator.next().getValue(User.class);
@@ -472,6 +483,13 @@ public class MessengerChatActivity extends AppCompatActivity {
                                         addChatListener();
                                         addMessageListener();
                                         isSentMessage = true;
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("me", mFirebaseUser.getEmail());
+                                        bundle.putString("roomId", mChatId);
+                                        mFirebaseAnalytics.logEvent("createChatRoom", bundle);
+                                        MessengerChatFragment.JOINED_ROOM = mChatId;
+
                                     }
                                 }
                             });

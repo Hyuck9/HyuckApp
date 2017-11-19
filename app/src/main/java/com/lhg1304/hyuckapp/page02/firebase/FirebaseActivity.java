@@ -48,10 +48,10 @@ public class FirebaseActivity extends AppCompatActivity
 
     private String selectedMemoKey;
 
-    static {
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseDatabase.setPersistenceEnabled(true);
-    }
+//    static {
+//        mFirebaseDatabase = FirebaseDatabase.getInstance();
+//        mFirebaseDatabase.setPersistenceEnabled(true);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

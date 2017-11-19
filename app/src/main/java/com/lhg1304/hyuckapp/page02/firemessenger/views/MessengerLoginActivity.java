@@ -54,6 +54,10 @@ public class MessengerLoginActivity extends AppCompatActivity implements GoogleA
 
     private static final String TAG = "MessengerLoginActivity";
 
+    static {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +66,11 @@ public class MessengerLoginActivity extends AppCompatActivity implements GoogleA
         mProgressView = (ProgressBar) findViewById(R.id.messenger_login_progress);
         mSignInButton = (SignInButton) findViewById(R.id.btn_messenger_sign_in);
         mAuth = FirebaseAuth.getInstance();
+        if ( mAuth.getCurrentUser() != null ) {
+            startActivity(new Intent(this, MessengerMainActivity.class));
+            finish();
+            return;
+        }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserRef = mFirebaseDatabase.getReference("users");
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);

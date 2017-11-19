@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -57,6 +58,8 @@ public class MessengerFriendFragment extends Fragment {
 
     private FriendListAdapter mFriendListAdapter;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,7 +69,7 @@ public class MessengerFriendFragment extends Fragment {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         mFriendsDBRef = mFirebaseDatabase.getReference("users").child(mFirebaseUser.getUid()).child("friends");
         mUserDBRef = mFirebaseDatabase.getReference("users");
 
@@ -88,7 +91,7 @@ public class MessengerFriendFragment extends Fragment {
                         public void onClick(View v) {
                             Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
                             chatIntent.putExtra("uids", mFriendListAdapter.getSelectedUids());
-                            startActivity(chatIntent);
+                            startActivityForResult(chatIntent, MessengerChatFragment.JOIN_ROOM_REQUEST_CODE);
                         }
                     }).show();
                 } else {
@@ -100,7 +103,7 @@ public class MessengerFriendFragment extends Fragment {
                         public void onClick(View v) {
                             Intent chatIntent = new Intent(getActivity(), MessengerChatActivity.class);
                             chatIntent.putExtra("uid", friend.getUid());
-                            startActivity(chatIntent);
+                            startActivityForResult(chatIntent, MessengerChatFragment.JOIN_ROOM_REQUEST_CODE);
                         }
                     }).show();
                 }
@@ -177,6 +180,11 @@ public class MessengerFriendFragment extends Fragment {
                                                 // users/{someone_uid}/friends/{my_uid}/내정보 등록
                                                 mUserDBRef.child(currentUser.getUid()).child("friends").push().setValue(user);
                                                 Snackbar.make(mSearchArea, "친구등록이 완료되었습니다.", Snackbar.LENGTH_LONG).show();
+
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("me", mFirebaseUser.getEmail());
+                                                bundle.putString("Friend", currentUser.getEmail());
+                                                mFirebaseAnalytics.logEvent("addFriend", bundle);
                                             }
 
                                             @Override

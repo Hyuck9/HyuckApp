@@ -20,7 +20,7 @@ public class Message {
     private List<String> readUserList;
 
     public enum MessageType {
-        TEXT, PHOTO
+        TEXT, PHOTO, EXIT
     }
 
 }
