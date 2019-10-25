@@ -5,8 +5,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,29 +72,29 @@ public class GoogleMapActivity extends AppCompatActivity {
         float minDistance = 0;
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        manager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime,
-                minDistance,
-                new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        showCurrentLocation(location);
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                    }
-                }
-        );
+//        manager.requestLocationUpdates(
+//                LocationManager.GPS_PROVIDER,
+//                minTime,
+//                minDistance,
+//                new LocationListener() {
+//                    @Override
+//                    public void onLocationChanged(Location location) {
+//                        showCurrentLocation(location);
+//                    }
+//
+//                    @Override
+//                    public void onStatusChanged(String provider, int status, Bundle extras) {
+//                    }
+//
+//                    @Override
+//                    public void onProviderEnabled(String provider) {
+//                    }
+//
+//                    @Override
+//                    public void onProviderDisabled(String provider) {
+//                    }
+//                }
+//        );
     }
 
     public void showCurrentLocation(Location location) {

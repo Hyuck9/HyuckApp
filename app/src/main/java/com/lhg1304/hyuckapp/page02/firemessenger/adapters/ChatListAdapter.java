@@ -1,11 +1,12 @@
 package com.lhg1304.hyuckapp.page02.firemessenger.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.lhg1304.hyuckapp.R;
 import com.lhg1304.hyuckapp.page02.firemessenger.customviews.RoundedImageView;

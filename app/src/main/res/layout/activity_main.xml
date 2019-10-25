@@ -27,7 +27,7 @@
             android:typeface="sans"/>
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/main_view_pager"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
